@@ -12,7 +12,7 @@ const loadEnvVariables = (): EnvConfig => {
   const requiredEnvVariables: string[] = ["PORT", "DB_URL", "NODE_ENV"];
 
   requiredEnvVariables.forEach((key) => {
-    if (!process.env.key) {
+    if (!process.env[key]) {
       throw new Error(`Missing required env variable ${key}`);
     }
   });
@@ -24,4 +24,4 @@ const loadEnvVariables = (): EnvConfig => {
   };
 };
 
-export const envVars = loadEnvVariables;
+export const envVars = loadEnvVariables();
