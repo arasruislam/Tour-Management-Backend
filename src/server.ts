@@ -2,17 +2,16 @@
 import { Server } from "http";
 import mongoose from "mongoose";
 import app from "./app";
+import { envVars } from "./app/config/env";
 
 let server: Server;
 
 const startServer = async () => {
   try {
-    await mongoose.connect(
-      "mongodb+srv://asruislam:asruislam@cluster0.ffyk5kj.mongodb.net/tour-db?appName=Cluster0",
-    );
+    await mongoose.connect(envVars.DB_URL);
     console.log("Connected to DB!!!");
 
-    server = app.listen(3000, () => {
+    server = app.listen(envVars.PORT, () => {
       console.log("Server Running");
     });
   } catch (error) {
@@ -47,8 +46,9 @@ process.on("unhandledRejection", (err) => {
     server.close(() => {
       process.exit(1);
     });
+  } else {
+    process.exit(1);
   }
-  process.exit(1);
 });
 
 /*
@@ -77,9 +77,9 @@ process.on("uncaughtException", (err) => {
     server.close(() => {
       process.exit(1);
     });
+  } else {
+    process.exit(1);
   }
-
-  process.exit(1);
 });
 
 /*
@@ -110,9 +110,9 @@ process.on("SIGTERM", () => {
     server.close(() => {
       process.exit(1);
     });
+  } else {
+    process.exit(1);
   }
-
-  process.exit(1);
 });
 
 /*
@@ -141,7 +141,7 @@ process.on("SIGINT", () => {
     server.close(() => {
       process.exit(1);
     });
+  } else {
+    process.exit(1);
   }
-
-  process.exit(1);
 });
