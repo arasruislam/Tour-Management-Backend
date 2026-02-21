@@ -7,9 +7,9 @@ import { User } from "./user.model";
 const createUser = async (payload: Partial<IUser>) => {
   const { email, password, ...rest } = payload;
 
-  const isUserExits = await User.findOne({ email });
-  if (isUserExits) {
-    throw new AppError(httpStatus.BAD_REQUEST, "User already exits");
+  const isUserExist = await User.findOne({ email });
+  if (isUserExist) {
+    throw new AppError(httpStatus.BAD_REQUEST, "User already exist");
   }
 
   const hashedPassword = await bcrypt.hash(password as string, 10);
@@ -22,7 +22,7 @@ const createUser = async (payload: Partial<IUser>) => {
   const user = await User.create({
     email,
     password: hashedPassword,
-    auth: [authProvider],
+    auths: [authProvider],
     ...rest,
   });
 
