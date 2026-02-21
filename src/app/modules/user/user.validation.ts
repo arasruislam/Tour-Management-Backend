@@ -61,7 +61,7 @@ export const updateUserZodSchema = z.object({
     .max(200, { message: "Address must be maximum 200 characters" })
     .optional(),
   role: z.enum(Object.values(Role) as [string]).optional(),
-  isActive: z.enum(Object.values[IsActive] as [string]).optional(),
+  isActive: z.enum(Object.values(IsActive) as [string]).optional(),
   isDeleted: z.boolean({ error: "IsDeleted must be true or false" }).optional(),
   isVerified: z
     .boolean({ error: "IsVerified must be true or false" })
