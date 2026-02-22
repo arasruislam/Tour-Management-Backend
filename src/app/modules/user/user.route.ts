@@ -24,10 +24,7 @@ router.get(
       }
 
       const verifiedToken = jwt.verify(accessToken, "secret");
-      if (
-        (verifiedToken as JwtPayload).role !== Role.ADMIN ||
-        Role.SUPER_ADMIN
-      ) {
+      if ((verifiedToken as JwtPayload).role !== Role.ADMIN) {
         throw new AppError(
           httpStatus.UNAUTHORIZED,
           "You are not permitted to view this data",
