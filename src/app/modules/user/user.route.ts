@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response, Router } from "express";
 import httpStatus from "http-status-codes";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import AppError from "../../errorHelpers/AppError";
 import { validateRequest } from "../../middlewares/validateRequest";
 import { UserControllers } from "./user.controller";
+import { Role } from "./user.interface";
 import { createUserZodSchema } from "./user.validation";
 
 const router = Router();
@@ -19,11 +20,19 @@ router.get(
     try {
       const accessToken = req.headers.authorization;
       if (!accessToken) {
-        throw new AppError(httpStatus.UNAUTHORIZED, "User Unauthorized");
+        throw new AppError(httpStatus.UNAUTHORIZED, "Access denied");
       }
 
       const verifiedToken = jwt.verify(accessToken, "secret");
-      console.log(verifiedToken);
+      if (
+        (verifiedToken as JwtPayload).role !== Role.ADMIN ||
+        Role.SUPER_ADMIN
+      ) {
+        throw new AppError(
+          httpStatus.UNAUTHORIZED,
+          "You are not permitted to view this data",
+        );
+      }
 
       next();
     } catch (error) {
