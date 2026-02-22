@@ -1,8 +1,10 @@
 import { NextFunction, Request, Response, Router } from "express";
 import httpStatus from "http-status-codes";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import { JwtPayload } from "jsonwebtoken";
+import { envVars } from "../../config/env";
 import AppError from "../../errorHelpers/AppError";
 import { validateRequest } from "../../middlewares/validateRequest";
+import { verifyToken } from "../../utils/jwt";
 import { UserControllers } from "./user.controller";
 import { Role } from "./user.interface";
 import { createUserZodSchema } from "./user.validation";
@@ -23,7 +25,7 @@ router.get(
         throw new AppError(httpStatus.UNAUTHORIZED, "Access denied");
       }
 
-      const verifiedToken = jwt.verify(accessToken, "secret");
+      const verifiedToken = verifyToken(accessToken, envVars.JWT_ACCESS_SECRET);
       if ((verifiedToken as JwtPayload).role !== Role.ADMIN) {
         throw new AppError(
           httpStatus.UNAUTHORIZED,
