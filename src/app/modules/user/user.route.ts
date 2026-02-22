@@ -11,13 +11,8 @@ import { createUserZodSchema } from "./user.validation";
 
 const router = Router();
 
-router.post(
-  "/register",
-  validateRequest(createUserZodSchema),
-  UserControllers.createUser,
-);
-router.get(
-  "/all-users",
+const checkAuth =
+  (...restRole: string[]) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const accessToken = req.headers.authorization;
@@ -37,8 +32,13 @@ router.get(
     } catch (error) {
       next(error);
     }
-  },
-  UserControllers.getAllUsers,
+  };
+
+router.post(
+  "/register",
+  validateRequest(createUserZodSchema),
+  UserControllers.createUser,
 );
+router.get("/all-users", checkAuth(), UserControllers.getAllUsers);
 
 export const UserRoutes = router;
