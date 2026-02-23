@@ -49,7 +49,7 @@ const updateUser = async (
       throw new AppError(httpStatus.FORBIDDEN, "you are not authorized");
     }
     if (
-      decodedToken.role === Role.SUPER_ADMIN ||
+      decodedToken.role === Role.SUPER_ADMIN &&
       decodedToken.role === Role.ADMIN
     ) {
       throw new AppError(httpStatus.FORBIDDEN, "you are not authorized");
