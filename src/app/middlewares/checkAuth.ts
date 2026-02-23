@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status-codes";
-import AppError from "../errorHelpers/AppError";
-import { verifyToken } from "../utils/jwt";
 import { JwtPayload } from "jsonwebtoken";
 import { envVars } from "../config/env";
+import AppError from "../errorHelpers/AppError";
+import { verifyToken } from "../utils/jwt";
 
 export const checkAuth =
   (...restRoles: string[]) =>
@@ -18,6 +18,8 @@ export const checkAuth =
         accessToken,
         envVars.JWT_ACCESS_SECRET,
       ) as JwtPayload;
+
+      req.user = verifiedToken;
 
       if (!restRoles.includes(verifiedToken.role)) {
         throw new AppError(
