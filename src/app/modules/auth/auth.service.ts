@@ -1,10 +1,10 @@
 import bcrypt from "bcryptjs";
 import httpStatus from "http-status-codes";
+import { envVars } from "../../config/env";
 import AppError from "../../errorHelpers/AppError";
 import { generateToken } from "../../utils/jwt";
 import { IUser } from "../user/user.interface";
 import { User } from "./../user/user.model";
-import { envVars } from "../../config/env";
 
 const credentialsLogin = async (payload: Partial<IUser>) => {
   const { email, password } = payload;
@@ -31,10 +31,19 @@ const credentialsLogin = async (payload: Partial<IUser>) => {
     envVars.JWT_ACCESS_SECRET,
     envVars.JWT_ACCESS_EXPIRES,
   );
+  const refrestToken = generateToken(
+    jwtPayload,
+    envVars.JWT_REFRESH_SECRET,
+    envVars.JWT_REFRESH_EXPIRES,
+  );
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { password: pass, ...rest } = isUserExist;
 
   return {
-    email: isUserExist.email,
     accessToken,
+    refrestToken,
+    user: rest,
   };
 };
 

@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import { model, Schema } from "mongoose";
 
 const tourSchema = new Schema<>({}, {timestamps: true, versionKey:false})
 
