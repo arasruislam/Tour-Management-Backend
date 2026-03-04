@@ -4,20 +4,14 @@ import httpStatus from "http-status-codes";
 import AppError from "../../errorHelpers/AppError";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
+import { setAuthCookie } from "../../utils/setAuthCookie";
 import { authServices } from "./auth.service";
 
 const credentialsLogin = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const loginInfo = await authServices.credentialsLogin(req.body);
 
-    res.cookie("accessToken", loginInfo.accessToken, {
-      httpOnly: true,
-      secure: false,
-    });
-    res.cookie("refreshToken", loginInfo.refreshToken, {
-      httpOnly: true,
-      secure: false,
-    });
+    setAuthCookie(res, loginInfo);
 
     sendResponse(res, {
       success: true,
@@ -37,6 +31,7 @@ const getNewAccessToken = catchAsync(
       );
     }
     const tokenInfo = await authServices.getNewAccessToken(refreshToken);
+    setAuthCookie(res, tokenInfo);
 
     sendResponse(res, {
       success: true,
