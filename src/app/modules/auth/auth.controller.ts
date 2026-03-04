@@ -1,23 +1,53 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status-codes";
+import AppError from "../../errorHelpers/AppError";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { authServices } from "./auth.service";
 
 const credentialsLogin = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const loginInfor = await authServices.credentialsLogin(req.body);
+    const loginInfo = await authServices.credentialsLogin(req.body);
+
+    res.cookie("accessToken", loginInfo.accessToken, {
+      httpOnly: true,
+      secure: false,
+    });
+    res.cookie("refreshToken", loginInfo.refreshToken, {
+      httpOnly: true,
+      secure: false,
+    });
 
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
       message: "User logged in successfully",
-      data: loginInfor,
+      data: loginInfo,
+    });
+  },
+);
+const getNewAccessToken = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "No refresh token recieved from cookies.",
+      );
+    }
+    const tokenInfo = await authServices.getNewAccessToken(refreshToken);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "User logged in successfully",
+      data: tokenInfo,
     });
   },
 );
 
 export const authControllers = {
   credentialsLogin,
+  getNewAccessToken,
 };
